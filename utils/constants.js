@@ -15,9 +15,9 @@ const BAD_REQUEST_ERROR_USER = 'Переданы некорректные дан
 
 const UNAUTHORIZED_ERROR_AUTH = 'Необходима авторизация';
 
-const SERVER_ERROR = 'Передан некорректный email';
+const SERVER_ERROR = 'На сервере произошла ошибка';
 
-const INVALID_EMAIL = 'На сервере произошла ошибка';
+const INVALID_EMAIL = 'Передан некорректный email';
 
 const CRASH_TEST = 'Сервер сейчас упадёт';
 
