@@ -3,16 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 const helmet = require('helmet');
-const { usersRoutes } = require('./routes/users');
-const { moviesRoutes } = require('./routes/movies');
 const { createUser, login } = require('./controllers/users');
-const { Auth } = require('./middlewares/auth');
 const { cors } = require('./middlewares/cors');
-const NotFoundError = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { errorHandler } = require('./middlewares/errorHandler');
-const { MONGODB_ADDRESS, NOT_FOUND_ERROR, CRASH_TEST } = require('./utils/constants');
+const { MONGODB_ADDRESS, CRASH_TEST } = require('./utils/constants');
 const { rateLimiter } = require('./middlewares/rateLimiter');
+const { router } = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -56,12 +53,7 @@ app.post('/signup', express.json(), celebrate({
   }),
 }), createUser);
 
-app.use('/', Auth, usersRoutes);
-app.use('/', Auth, moviesRoutes);
-
-app.use('*', Auth, () => {
-  throw new NotFoundError(NOT_FOUND_ERROR);
-});
+app.use(router);
 
 app.use(errors());
 app.use(errorLogger); // подключаем логгер ошибок
