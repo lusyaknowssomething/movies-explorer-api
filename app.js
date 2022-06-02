@@ -11,17 +11,20 @@ const { cors } = require('./middlewares/cors');
 const NotFoundError = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { errorHandler } = require('./middlewares/errorHandler');
+const { MONGODB_ADDRESS, NOT_FOUND_ERROR, CRASH_TEST } = require('./utils/constants');
+const { rateLimiter } = require('./middlewares/rateLimiter');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
+app.use(rateLimiter);
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.disable('x-powered-by');
 
 app.use((req, res, next) => cors(req, res, next));
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect(MONGODB_ADDRESS, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -34,7 +37,7 @@ app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
+    throw new Error(CRASH_TEST);
   }, 0);
 });
 
@@ -57,7 +60,7 @@ app.use('/', Auth, usersRoutes);
 app.use('/', Auth, moviesRoutes);
 
 app.use('*', Auth, () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  throw new NotFoundError(NOT_FOUND_ERROR);
 });
 
 app.use(errors());
