@@ -5,13 +5,12 @@ const {
   getMyProfile,
   updateUser,
 } = require('../controllers/users');
-//  const { urlValidation } = require('../middlewares/urlValidation');
 
 usersRoutes.get('/users/me', getMyProfile);
 usersRoutes.patch('/users/me', express.json(), celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
+    email: Joi.string().required().email(),
   }),
 }), updateUser);
 

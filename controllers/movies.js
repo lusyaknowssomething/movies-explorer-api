@@ -16,7 +16,7 @@ exports.createMovie = (req, res, next) => {
     .then((movie) => res.send({ data: movie }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании карточки'));
+        next(new BadRequestError('Переданы некорректные данные при создании фильма'));
       } else {
         next(error);
       }
