@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const UnauthorizedError = require('../errors/unauthorized-err');
-const { UNAUTHORIZED_ERROR } = require('../utils/constants');
+const { UNAUTHORIZED_ERROR, INVALID_EMAIL } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (email) => validator.isEmail(email),
-      message: 'Передан некорректный email',
+      message: INVALID_EMAIL,
     },
   },
   password: {

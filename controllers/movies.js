@@ -35,10 +35,7 @@ exports.deleteMovieById = (req, res, next) => {
   const { movieId } = req.params;
 
   Movie.findById(movieId)
-    .orFail()
-    .catch(() => {
-      throw new NotFoundError(NOT_FOUND_ERROR_MOVIE);
-    })
+    .orFail(new NotFoundError(NOT_FOUND_ERROR_MOVIE))
     .then((movie) => {
       if (movie.owner.toString() !== userId) {
         throw new ForbiddenError(FORBIDDEN_ERROR_MOVIE);
@@ -46,14 +43,13 @@ exports.deleteMovieById = (req, res, next) => {
       Movie.findByIdAndRemove(movieId)
         .then((movieForDelete) => {
           res.send({ data: movieForDelete });
-        })
-        .catch((error) => {
-          if (error.name === 'CastError') {
-            next(new BadRequestError(BAD_REQUEST_ERROR_DELETE_MOVIE));
-          } else {
-            next(error);
-          }
         });
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        next(new BadRequestError(BAD_REQUEST_ERROR_DELETE_MOVIE));
+      } else {
+        next(error);
+      }
+    });
 };

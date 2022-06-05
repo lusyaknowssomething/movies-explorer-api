@@ -7,7 +7,8 @@ const BadRequestError = require('../errors/bad-request-err');
 const {
   CONFLICT_ERROR_USER,
   NOT_FOUND_ERROR_USER,
-  BAD_REQUEST_ERROR_USER,
+  BAD_REQUEST_ERROR_CREATE_USER,
+  BAD_REQUEST_ERROR_UPDATE_USER,
 } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
@@ -21,20 +22,22 @@ exports.getMyProfile = (req, res, next) => {
 
 exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name, email, password,
   } = req.body;
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      name, email, password: hash,
     }))
     .then((user) => res.send({
       data: {
-        name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+        name: user.name, email: user.email,
       },
     }))
     .catch((error) => {
-      if (error.code === 11000) {
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError(BAD_REQUEST_ERROR_CREATE_USER));
+      } else if (error.code === 11000) {
         next(new ConflictError(CONFLICT_ERROR_USER));
       } else {
         next(error);
@@ -43,11 +46,11 @@ exports.createUser = (req, res, next) => {
 };
 
 exports.updateUser = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email } = req.body;
 
   User.findByIdAndUpdate(
     req.user._id,
-    { name, about },
+    { name, email },
     {
       new: true, // обработчик then получит на вход обновлённую запись
       runValidators: true, // данные будут валидированы перед изменением
@@ -62,7 +65,9 @@ exports.updateUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequestError(BAD_REQUEST_ERROR_USER));
+        next(new BadRequestError(BAD_REQUEST_ERROR_UPDATE_USER));
+      } else if (error.code === 11000) {
+        next(new ConflictError(CONFLICT_ERROR_USER));
       } else {
         next(error);
       }
