@@ -9,8 +9,8 @@ const { errorHandler } = require('./middlewares/errorHandler');
 const { CRASH_TEST } = require('./utils/constants');
 const { rateLimiter } = require('./middlewares/rateLimiter');
 const { router } = require('./routes/index');
+const { PORT, MONGODB_ADDRESS } = require('./config');
 
-const { PORT = 3000, MONGODB_ADDRESS = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
