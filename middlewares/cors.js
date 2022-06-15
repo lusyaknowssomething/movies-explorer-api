@@ -3,6 +3,7 @@ const allowedCors = [
   'https://praktikum.tk',
   'http://praktikum.tk',
   'http://lusya-movies-explorer.nomoredomains.xyz',
+  'https://lusya-movies-explorer.nomoredomains.xyz',
   'https://lusya-movies-explorer.nomoredomains.xyz/',
   'localhost:3000',
   'http://localhost:3000',
@@ -11,7 +12,6 @@ const allowedCors = [
   'https://51.250.108.139:3000',
   'http://api.lusya-movies-explorer.nomoredomains.xyz',
   'https://api.lusya-movies-explorer.nomoredomains.xyz',
-  'https://lusya-movies-explorer.nomoredomains.xyz/',
 ];
 
 exports.cors = ((req, res, next) => {
